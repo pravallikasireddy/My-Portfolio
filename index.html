@@ -1,0 +1,214 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pravallika - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white fixed w-full top-0 shadow-md z-10">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">Pravallika Kasireddy</h1>
+            <ul class="flex space-x-6">
+                <li><a href="#home" class="hover:underline">Home</a></li>
+                <li><a href="#skills" class="hover:underline">Skills</a></li>
+                <li><a href="#projects" class="hover:underline">Projects</a></li>
+                <li><a href="#experience" class="hover:underline">Experience</a></li>
+                <li><a href="#contact" class="hover:underline">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+        <div class="text-center max-w-2xl mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Hi, I'm Pravallika Kasireddy</h2>
+            <p class="text-lg md:text-xl mb-6">A passionate Software Developer with expertise in building modern web applications.</p>
+            <a href="#contact" class="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:bg-gray-200">Get in Touch</a>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Technical Skills</h3>
+                    <ul class="list-disc list-inside">
+                        <li>JavaScript (React, Node.js)</li>
+                        <li>Python (Django, Flask)</li>
+                        <li>HTML, CSS, Tailwind</li>
+                        <li>SQL, MongoDB</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Soft Skills</h3>
+                    <ul class="list-disc list-inside">
+                        <li>Problem Solving</li>
+                        <li>Team Collaboration</li>
+                        <li>Communication</li>
+                        <li>Time Management</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Tools</h3>
+                    <ul class="list-disc list-inside">
+                        <li>Git, GitHub</li>
+                        <li>Docker</li>
+                        <li>VS Code</li>
+                        <li>Figma</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-16 bg-gray-100">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">E-Commerce Platform</h3>
+                    <p class="mb-4">A full-stack web application built with React and Node.js, featuring user authentication, product filtering, and payment integration.</p>
+                    <a href="https://github.com/pravallikasireddy" class="text-blue-600 hover:underline">View on GitHub</a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Task Manager App</h3>
+                    <p class="mb-4">A Python-based application using Django for managing tasks with features like due dates, priorities, and user collaboration.</p>
+                    <a href="https://github.com/johndoe/taskmanager" class="text-blue-600 hover:underline">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Experience</h2>
+            <div class="space-y-6">
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold">Software Engineer at TechCorp</h3>
+                    <p class="text-gray-600">June 2022 - Present</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>Developed and maintained web applications using React and Node.js.</li>
+                        <li>Collaborated with cross-functional teams to deliver scalable solutions.</li>
+                        <li>Optimized database queries, reducing load times by 30%.</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold">Junior Developer at StartUp Inc.</h3>
+                    <p class="text-gray-600">Jan 2020 - May 2022</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>Built RESTful APIs using Python and Flask.</li>
+                        <li>Contributed to front-end development with JavaScript and HTML/CSS.</li>
+                        <li>Participated in code reviews and agile workflows.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-100">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Contact Me</h2>
+            <div class="max-w-lg mx-auto">
+                <div class="mb-6">
+                    <p class="text-lg">Email: <a href="mailto:pravallikasireddy2003@gmail.com" class="text-blue-600 hover:underline">pravallikasireddy2003@gmail.com</a></p>
+                    <p class="text-lg">LinkedIn: <a href="https://www.linkedin.com/in/pravallika-kasireddy-483758346/" class="text-blue-600 hover:underline">pravallika kasireddy</a></p>
+                    <p class="text-lg">GitHub: <a href="https://github.com/pravallikasireddy" class="text-blue-600 hover:underline">pravallikasireddy</a></p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Send a Message</h3>
+                    <div>
+                        <div class="mb-4">
+                            <label for="name" class="block text-sm font-medium">Name</label>
+                            <input type="text" id="name" class="w-full p-2 border rounded-md" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium">Email</label>
+                            <input type="email" id="email" class="w-full p-2 border rounded-md" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="block text-sm font-medium">Message</label>
+                            <textarea id="message" class="w-full p-2 border rounded-md" rows="4" required></textarea>
+                        </div>
+                        <button onclick="submitForm()" class="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-700">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-4">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p>&copy; 2025 Pravallika Kasireddy. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            if (name && email && message) {
+                alert('Thank you for your message! I will get back to you soon.');
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('message').value = '';
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+    </script>
+</body>
+</html>
